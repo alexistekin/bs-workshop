@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+    name: template-data
+    description: Approved templates for Backstage for AWS
+spec:
+    targets:
+        # APPS
+        - ./example-nodejs/template.yaml
+        - ./example-springboot/template.yaml
+        - ./example-eks-note-app/template.yaml
+        - ./example-serverless-rest-api/template.yaml
+        - ./example-nodejs-rds/template.yaml
+        # - ./example-nodejs-efs/template.yaml
+        - ./example-python-flask/template.yaml
+        # # Environments
+        - ./aws-environment/template.yaml
+        - ./aws-ecs-environment-provider/template.yaml
+        - ./aws-eks-environment-provider/template.yaml
+        - ./aws-serverless-environment-provider/template.yaml
+        # AWS Resources
+        - ./aws-rds-resource/template.yaml
+    rules:
+        - allow: [Template]
+

@@ -1,0 +1,184 @@
+app:
+  title:  AWS Application Development
+  baseUrl: http://localhost:3000
+  logo: ${CUSTOMER_LOGO}
+  logoIcon: ${CUSTOMER_LOGO_ICON}
+
+organization:
+  name: ${CUSTOMER_NAME}
+
+backend:
+  # Used for enabling authentication, secret is shared by all backend plugins
+  # See https://backstage.io/docs/auth/service-to-service-auth for
+  # information on the format
+  # auth:
+  #   keys:
+  #     - secret: ${BACKEND_SECRET}
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+    # Uncomment the following host directive to bind to specific interfaces
+    # host: 127.0.0.1
+  csp:
+    connect-src: ["'self'", "http:", "https:"]
+    # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
+    # Default Helmet Content-Security-Policy values can be removed by setting the key to false
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  # This is for local development only, it is not recommended to use this in production
+  # The production database configuration is stored in app-config.production.yaml
+  database:
+    # client: better-sqlite3
+    # connection: ':memory:'
+    client: pg
+    connection:
+      host: ${POSTGRES_HOST}
+      port: ${POSTGRES_PORT}
+      user: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+  # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
+  platformRegion: us-east-1
+  reading:
+    allow:
+      - host: ${SSM_GITLAB_HOSTNAME}
+
+integrations:
+  github:
+    - host: github.com
+      # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
+      # about setting up the GitHub integration here: https://backstage.io/docs/getting-started/configuration#setting-up-a-github-integration
+      token: ${GITHUB_TOKEN}
+    ### Example for how to add your GitHub Enterprise instance using the API:
+    # - host: ghe.example.net
+    #   apiBaseUrl: https://ghe.example.net/api/v3
+    #   token: ${GHE_TOKEN}
+  gitlab:
+    - host: ${SSM_GITLAB_HOSTNAME}
+      apiBaseUrl: ${SSM_GITLAB_URL}/api/v4
+      baseUrl: ${SSM_GITLAB_URL}
+      token: ${SECRET_GITLAB_CONFIG_PROP_apiToken}
+
+proxy:
+  ### Example for how to add a proxy endpoint for the frontend.
+  ### A typical reason to do this is to handle HTTPS and CORS for internal services.
+  # endpoints:
+  #   '/test':
+  #     target: 'https://example.com'
+  #     changeOrigin: true
+
+# Reference documentation http://backstage.io/docs/features/techdocs/configuration
+# Note: After experimenting with basic setup, use CI/CD to generate docs
+# and an external cloud storage when deploying TechDocs for production use-case.
+# https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
+techdocs:
+  builder: "local" # Alternatives - 'external'
+  generator:
+    runIn: "docker" # Alternatives - 'local'
+  publisher:
+    type: "local" # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+
+auth:
+  # see https://backstage.io/docs/auth/ to learn about auth providers
+  environment: development
+  providers:
+    okta:
+      development:
+        clientId: ${OKTA_CLIENT_ID}
+        clientSecret: ${OKTA_CLIENT_SECRET}
+        audience: ${OKTA_AUDIENCE}
+        # authServerId:
+        # idp:
+
+scaffolder:
+  # see https://backstage.io/docs/features/software-templates/configuration for software template options
+  defaultAuthor:
+    name: ${BACKSTAGE_SCAFFOLDER_NAME}
+    email: ${BACKSTAGE_SCAFFOLDER_EMAIL}
+
+gitlab:
+  allowedKinds:
+    - Component
+    - Resource
+    - AWSEnvironmentProvider
+
+catalog:
+  import:
+    entityFilename: catalog-info.yaml
+    pullRequestBranchName: backstage-integration
+  rules:
+    - allow:
+        [
+          Component,
+          System,
+          API,
+          Resource,
+          Location,
+          Template,
+          AWSEnvironment,
+          AWSEnvironmentProvider,
+        ]
+  locations:
+    # Local example data, file locations are relative to the backend process, typically `packages/backend`
+    # - type: file
+    #   target: ../../examples/entities.yaml
+
+    # # Local example template
+    # - type: file
+    #   target: ../../examples/template/template.yaml
+    #   rules:
+    #     - allow: [Template]
+
+    # Local example organizational data
+    # - type: file
+    #   target: ../../examples/org.yaml
+    #   rules:
+    #     - allow: [User, Group]
+
+    # # Local templates data
+    - type: file
+      target: ../../../git-temp/backstage-reference/templates/all-templates.yaml
+      rules:
+        - allow: [Location, Component]
+
+    # - type: file
+    #   target: ../../../git-temp/backstage-reference/catalog/all-environments.yaml
+    #   rules:
+    #     - allow: [Location, AWSEnvironment]
+
+    # - type: file
+    #   target: ../../../git-temp/backstage-reference/catalog/all-environment-providers.yaml
+    #   rules:
+    #     - allow: [Location, AWSEnvironmentProvider]
+
+    ## Uncomment these lines to add more example data
+    # - type: url
+    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+
+    ## Uncomment these lines to add an example org
+    # - type: url
+    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
+    #   rules:
+    #     - allow: [User, Group]
+
+  providers:
+    okta:
+      - orgUrl: ${OKTA_AUDIENCE}
+        token: ${OKTA_API_TOKEN}
+        # userFilter: profile.department eq "engineering"
+        # groupFilter: profile.name eq "Developers"
+    gitlab:
+      aad:
+        host: ${SSM_GITLAB_HOSTNAME}
+        branch: main
+        fallbackBranch: main
+        skipForkedRepos: false
+        # group: example-group # Optional. Group and subgroup (if needed) to look for repositories. If not present the whole instance will be scanned
+        groupPattern: 'aws-environment*'
+        entityFilename: .backstage/catalog-info.yaml
+        projectPattern: '[\s\S]*'
+        schedule:
+          frequency: { minutes: 30 }
+          timeout: { minutes: 3 }
+

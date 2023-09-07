@@ -1,0 +1,63 @@
+image: node:18
+
+variables:
+  AWS_ACCOUNT: "${{ values.aws_account }}"
+  AWS_DEFAULT_REGION: "${{ values.aws_region }}"
+
+stages:
+  - build
+
+cdk-deploy:
+  stage: build
+  before_script:
+    - cat /etc/os-release
+    - apt-get update
+    - apt install nodejs npm git python3-pip yq jq -y
+    - export PIP_BREAK_SYSTEM_PACKAGES=1
+    - pip3 install awscli --upgrade
+    - npm i --location=global aws-cdk@2.88.0
+    - npm install -g aws-cli typescript@latest
+    - aws --version
+    - apt install sudo
+    - curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+    - echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    - sudo apt update
+    - sudo apt install kubectl
+    - aws sts get-caller-identity
+    - ROLE_OUTPUT=$(aws sts assume-role --role-arn "arn:aws:iam::$AWS_ACCOUNT:role/aad-dev7-provisioning-role" --role-session-name "pipelineJob-115272120974" --duration-second=3600 --output json) && export AWS_ACCESS_KEY_ID=$(echo ${ROLE_OUTPUT} | jq -r '.Credentials.AccessKeyId') && export AWS_SECRET_ACCESS_KEY=$(echo ${ROLE_OUTPUT} | jq -r '.Credentials.SecretAccessKey') && export AWS_SESSION_TOKEN=$(echo ${ROLE_OUTPUT} | jq -r '.Credentials.SessionToken') && unset AWS_PROFILE #TODO, make the assumed role env agnostic, from dev7 to anyone
+    - aws sts get-caller-identity
+    - export ACCESS_TOKEN=`aws secretsmanager get-secret-value --secret-id aad-admin-gitlab-secrets --region us-east-1| jq --raw-output '.SecretString' | jq -r .apiToken`
+  
+  script:
+    - echo "Now running CDK"
+    - echo "export environment variables"
+    - export $(cat stack-parameters.properties | xargs)
+    - cd .iac/aad-eks-environment
+    - yarn install
+    - echo " deploying the cluster and saving outputs in a file"
+    - cdk deploy "*" --outputs-file cdk-eks-$ENV_NAME-output.json --require-approval never
+    - echo " Now We are retrieving and saving the arn or the role that created the cluster"
+    - CLUSTER_CREATOR_ROLE_ARN=$(aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=CreateCluster --query 'Events[0].CloudTrailEvent' --output text | jq '.userIdentity.sessionContext.sessionIssuer.arn')
+    - CLUSTER_CREATOR_ROLE_ARN=$(sed -e 's/^"//' -e 's/"$//' <<<"$CLUSTER_CREATOR_ROLE_ARN")
+    - echo "extracting the outputs"
+    - jq '.[] ' cdk-eks-$ENV_NAME-output.json | jq -r 'to_entries[]|"\(.key)=\"\(.value)\""' > cdk-eks-$ENV_NAME-output.properties
+    - echo " exporting environment variables "
+    - cat cdk-eks-$ENV_NAME-output.properties
+    - set -a && source cdk-eks-$ENV_NAME-output.properties && set +a
+    - echo " populating catalog infor with environment data"
+    - cd ../../.backstage
+    - yq -Yi ".metadata.vpc =\"${VPC}\"" catalog-info.yaml
+    - yq -Yi ".metadata[\"cluster-name\"] = \"${ClusterName}\"" catalog-info.yaml
+    - yq -Yi ".metadata[\"audit-table\"] = \"${AuditTable}\"" catalog-info.yaml
+    - yq -Yi ".metadata[\"operation-role\"] = \"${OperationsRoleARN}\"" catalog-info.yaml
+    - yq -Yi ".metadata[\"provisioning-role\"] = \"${ProvisioningRoleARN}\"" catalog-info.yaml
+    - echo " saving cluster creator role in catalog info yaml "
+    - yq -Yi ".metadata[\"cluster-creation-role\"] = \"${CLUSTER_CREATOR_ROLE_ARN}\"" catalog-info.yaml
+    - cat catalog-info.yaml
+    - echo "processing output, setting context and adding cluster acces role to context "
+    - aws eks update-kubeconfig --name aad-$ENV_NAME-eks-cluster --region $AWS_DEFAULT_REGION --role-arn arn:aws:iam::$AWS_ACCOUNT:role/aad-eks-$ENV_NAME-provisioning-role # this sets context for current user, not ssmuser
+    - git config --global user.email "fsi-pace-pe@amazon.com"
+    - git config --global user.name "AAD CICD User"
+    - git add --all
+    - git commit --allow-empty -m "updating entity details" --q 
+    - git push -o ci.skip https://oauth2:$ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME HEAD:main

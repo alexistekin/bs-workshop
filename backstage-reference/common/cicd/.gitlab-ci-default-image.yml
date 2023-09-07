@@ -1,0 +1,17 @@
+default:
+  image:
+    name: node:18
+  before_script:
+    - cat /etc/os-release
+    - apt-get update
+    - apt install nodejs npm git python3-pip yq jq -y
+    - export PIP_BREAK_SYSTEM_PACKAGES=1
+    - pip3 install awscli --upgrade
+    - yarn global add aws-cli typescript@latest aws-cdk@2.88.0
+    - yarn --version
+    - aws --version
+    - aws sts get-caller-identity
+    # Storing gitlab access token before changing role
+    - export ACCESS_TOKEN=`aws secretsmanager get-secret-value --secret-id aad-admin-gitlab-secrets --region us-east-1| jq --raw-output '.SecretString' | jq -r .apiToken`
+    - git config --global user.email "fsi-pace-pe@amazon.com"
+    - git config --global user.name "AAD CICD User"

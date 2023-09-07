@@ -1,0 +1,106 @@
+.abstract-iac-deployment:
+  script:
+    - set -a && source $PROVIDER_PROPS_FILE && set +a
+    # - ROLE_OUTPUT=$(aws sts assume-role --role-arn "$ENV_ROLE_ARN" --role-session-name "$CI_PROJECT_NAME-$CI_JOB_STAGE" --duration-second=3600 --output json)
+    # - export AWS_ACCESS_KEY_ID=$(echo ${ROLE_OUTPUT} | jq -r '.Credentials.AccessKeyId')
+    # - export AWS_SECRET_ACCESS_KEY=$(echo ${ROLE_OUTPUT} | jq -r '.Credentials.SecretAccessKey')
+    # - export AWS_SESSION_TOKEN=$(echo ${ROLE_OUTPUT} | jq -r '.Credentials.SessionToken')
+    - aws sts get-caller-identity
+    - cd $CI_PROJECT_DIR/.iac/aws_eks/
+    - yarn install
+    - yarn global add aws-cli typescript@latest aws-cdk@2.88.0
+    - $CI_PROJECT_DIR/.iac/aws_eks/node_modules/.bin/cdk deploy --outputs-file cdk-output.json --require-approval never
+    - cat cdk-output.json
+    - jq '.[] ' cdk-output.json | jq -r 'to_entries[]|"\(.key)=\"\(.value)\""' > cdk-output.properties
+    - cat cdk-output.properties
+    - set -a && source cdk-output.properties && set +a
+    # alter entity details
+    - cd ../../.backstage
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"EcrRepositoryUri\"] =\"${EcrRepositoryUri}\"" catalog-info.yaml
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"EcrRepositoryArn\"] =\"${EcrRepositoryArn}\"" catalog-info.yaml
+    # - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"EcsServiceArn\"] =\"${EcsServiceArn}\"" catalog-info.yaml
+    # - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"EcsTaskDefinitionArn\"] =\"${EcsTaskDefinitionArn}\"" catalog-info.yaml
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"TaskLogGroup\"] =\"${TaskLogGroup}\"" catalog-info.yaml
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"AppResourceGroup\"] =\"${AppResourceGroup}\"" catalog-info.yaml
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"StackName\"] =\"${StackName}\"" catalog-info.yaml
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"Namespace\"] =\"${NAMESPACE}\"" catalog-info.yaml
+    - ALREADY_DEPENDS_ON="$(grep "awsenvironment:default/$TARGET_ENV_NAME" catalog-info.yaml || true)"
+    - if [[ -z "$ALREADY_DEPENDS_ON" ]]; then yq -Yi ".spec.dependsOn += [\"awsenvironment:default/${TARGET_ENV_NAME}\"]" catalog-info.yaml; fi
+    - cat catalog-info.yaml
+
+
+    - echo "innstalling required kubernetes utilities"
+    - apt install sudo
+    - curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+    - echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    - sudo apt update
+    - sudo apt install kubectl
+    - echo "getting eksctl"
+    - curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+    - mv /tmp/eksctl /usr/local/bin
+    - eksctl version
+    - curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/linux/amd64/aws-iam-authenticator
+    - chmod +x ./aws-iam-authenticator
+    - mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+    - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bash_profile
+    - aws-iam-authenticator help
+
+    - echo "done installing kubernetes utilities "
+    - aws sts get-caller-identity
+    - echo "searching and processing the dynamically generated stack parameter file"
+    - file_path=$(find . -name "parameters.properties" -print -quit)
+    - cat $file_path
+    - export $(cat $file_path | xargs)
+    - echo " done processing the file "
+    - echo $TARGET_EKS_CLUSTER_ARN
+    - echo " extracting cluster name from cluster arn"
+    - cluster_name="${TARGET_EKS_CLUSTER_ARN##*/}"
+    - echo "Extracted cluster name $cluster_name"
+    - pwd
+    - ls
+    # - export ACCESS_TOKEN=`aws secretsmanager get-secret-value --secret-id aad-admin-gitlab-secrets --region us-east-1| jq --raw-output '.SecretString' | jq -r .apiToken`
+    - cd ../src/app
+    - aws eks update-kubeconfig --name $cluster_name --region $REGION --role-arn arn:aws:iam::$ACCOUNT:role/aad-$TARGET_ENV_PROVIDER_NAME-provisioning-role
+    # - echo " creating namespace if it does not exists"
+    # - kubectl create namespace $ENV_NAME --dry-run=client -o yaml | kubectl apply -f -
+    # - eksctl create fargateprofile --cluster $cluster_name  --name $ENV_NAME-fp --namespace $ENV_NAME
+    - kubectl create serviceaccount -n $NAMESPACE  $APP_SHORT_NAME-sa --dry-run=client -o yaml | kubectl apply -f -
+    - kubectl create clusterrolebinding $APP_SHORT_NAME-rb   --clusterrole=backstage-cluster-role    --serviceaccount=$NAMESPACE:$APP_SHORT_NAME-sa --dry-run=client -o yaml | kubectl apply -f -
+    - sed -e "s|NAMESPACE|$NAMESPACE|g ; s|APP_NAME|$APP_SHORT_NAME|g" templates/secret.yaml | kubectl apply -f -
+    # - kubectl -n note-app5 get secret note-app5-secret -o go-template='{{.data.token | base64decode}}' to get irsa token needed in app config yaml
+    - echo " now we are dynamically updating namespaces and applying the manifests "
+    - sed -e "s|NAMESPACE|$NAMESPACE|g; s|TARGET_ACCOUNT|${ACCOUNT}|g; s|TARGET_REGION|${REGION}|g; s|APP_NAME|$APP_SHORT_NAME|g ; s|TARGET_ENV_PROVIDER_NAME|$TARGET_ENV_PROVIDER_NAME|g " templates/deployment.yaml | kubectl apply -f -
+    - sed -e "s|NAMESPACE|$NAMESPACE|g ; s|APP_NAME|$APP_SHORT_NAME|g" templates/service.yaml | kubectl apply -f -
+    - sed -e "s|NAMESPACE|$NAMESPACE|g ; s|APP_NAME|$APP_SHORT_NAME|g" templates/ingress.yaml | kubectl apply -f -
+    - kubectl rollout restart deployment notes-app-deployment-$APP_SHORT_NAME -n $NAMESPACE
+    - echo " retrieving load balancer to access application"
+    - kubectl get -n $NAMESPACE ingress/note-app-ingress-$APP_SHORT_NAME --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}"
+    - sleep 5
+    - kubectl get ing -n $NAMESPACE
+    - ALB_ENDPOINT=$(kubectl get ing -n $NAMESPACE -o=jsonpath='{.items[?(@.metadata.name=="note-app-ingress-'"$APP_SHORT_NAME"'")].status.loadBalancer.ingress[0].hostname}')
+    - echo $ALB_ENDPOINT
+    - ALB_ENDPOINT=$(sed -e 's/^"//' -e 's/"$//' <<<"$ALB_ENDPOINT")
+    - echo $ALB_ENDPOINT
+    - cd ../../.backstage
+    - DeploymentName=notes-app-deployment-$APP_SHORT_NAME
+    - sed -i 's|ALB_ENDPOINT|'"$ALB_ENDPOINT"'|g' catalog-info.yaml
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"AlbEndpoint\"] =\"${ALB_ENDPOINT}\"" catalog-info.yaml
+    - yq -Yi ".metadata.appData[\"${TARGET_ENV_NAME}\"][\"${TARGET_ENV_PROVIDER_NAME}\"][\"DeploymentName\"] =\"${DeploymentName}\"" catalog-info.yaml
+    - cat catalog-info.yaml
+
+
+
+
+    - git add $CI_PROJECT_DIR/.backstage/catalog-info.yaml
+    - git add catalog-info.yaml
+    - UPDATE_COUNT=$(git diff --cached --numstat | wc -l | sed 's/ *$//g')
+    - echo "The number of files that will be committed is $UPDATE_COUNT"
+    - git status
+    - if [[ "$UPDATE_COUNT" -gt "0" ]]; then git commit -m "updating entity details" --quiet; fi
+    - if [[ "$UPDATE_COUNT" -gt "0" ]]; then git push -o ci.skip https://oauth2:$ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME HEAD:main; fi
+  cache:
+    - key:
+        files:
+          - $CI_PROJECT_DIR/.iac/aws_eks/yarn.lock
+      paths:
+        - $CI_PROJECT_DIR/.iac/aws_eks/node_modules

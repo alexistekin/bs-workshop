@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: NAMESPACE
+  name: notes-app-deployment-APP_NAME
+  labels:
+    app: notes-app
+    backstage.io/kubernetes-id: APP_NAME
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: notes-app
+  template:
+    metadata:
+      labels:
+        app: notes-app
+        backstage.io/kubernetes-id: APP_NAME
+    spec:
+      containers:
+      - name: notes-app-deployment
+        image: TARGET_ACCOUNT.dkr.ecr.TARGET_REGION.amazonaws.com/APP_NAME-TARGET_ENV_PROVIDER_NAME:latest
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            cpu: "100m"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3003
