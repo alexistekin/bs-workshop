@@ -7,6 +7,12 @@ shopt -s expand_aliases
 
 confirm_aws_account
 
+# Get the AWS account ID
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+# Get the AWS region
+#TODO: this would require that the cloud9 instance is in the same region as the ecs cluster 
+AWS_DEFAULT_REGION=$(aws configure get region)  
+
 # Set the desired count of the service to the first argument; otherwisee, the service will be scaled to 2
 DESIRED_COUNT=${1:-2}
 
