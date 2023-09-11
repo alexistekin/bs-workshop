@@ -10,3 +10,9 @@ deploy-backstage:
 
 test:
 	./build-script/hello-world.sh
+
+push-backstage-reference-repo:
+	./build-script/gitlab-tools.sh
+	
+pce:
+	./build-script/utility-functions.sh print_current_environment
