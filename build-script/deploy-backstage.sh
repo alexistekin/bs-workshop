@@ -5,7 +5,7 @@ scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $scriptDir/helpers.sh
 shopt -s expand_aliases
 
-confirm_aws_account
+# confirm_aws_account
 
 # Get the AWS account ID
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
