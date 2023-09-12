@@ -1,0 +1,431 @@
+
+----------------------------------------------
+03:06:28 PM - Context: cpa_hooks
+----------------------------------------------
+
+
+Application Constant Settings:
+          Application Root Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop
+   Core Environment Script Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/environment
+                       IaC Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/iac
+           IaC Root Module Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/iac/roots
+  IaC Root Module Relative Dir: /iac/roots
+  Application Build Script Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/build-script
+              CICD Module Name: cicd
+CICD (CloudFormation Only) Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/cicd
+                  Before Hooks: generate_make_env generate_env_file
+After Environment Switch Hooks: generate_env_file
+           Clear Text Log Keys: APP_NAME AWS_ACCOUNT_ID AWS_CREDS_TARGET_ROLE AWS_DEFAULT_REGION CREATED_BY ENABLE_ONCE_PER_ACCOUNT_RESOURCES ENV_NAME SONAR_HOST_URL SONAR_PROJECT_KEY TF_S3_BACKEND_NAME DEPLOYMENT_TYPE GITLAB_SECRET_NAME OKTA_SECRET_NAME SSM_PIPELINE_ROLE_ARN PLATFORM_ROLE_ARN SSM_GITLAB_HOSTNAME SSM_GITLAB_URL
+          Node Package Manager: yarn
+                   curlCommand: curl -L -b ~/.midway/cookie -c ~/.midway/cookie
+
+ROOT_CONTEXT is "cpa_hooks"
+ROOT_CONTEXT_ARGS is "pce"
+
+WARNING: Could not detect how to parse git remote to set environment variables
+
+Configs will be read from JSON environment config files.
+
+
+Dynamic Lookups are DISABLED
+
+Dynamic Lookups FAIL_ON_LOOKUP_ERROR is ENABLED
+
+Dynamic Lookup Configurations:
+SSM_PIPELINE_ROLE_ARN = /aad/pipeline-role
+SSM_GITLAB_HOSTNAME = /aad/gitlab-hostname
+SSM_GITLAB_URL = /aad/gitlab-url
+SECRET_GITLAB_CONFIG_PROP_apiToken = aad-admin-gitlab-secrets
+
+
+Checking for dynamic lookup cache file at "/Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/environment/.environment-ws-lookup-cache.json"
+Dynamic lookup cache file NOT found
+
+
+
+Executing CPA hooks...
+Executing hook: generate_make_env
+
+WARNING: Could not detect how to parse git remote to set environment variables
+
+Contents written out to make-env file:
+export APP_NAME:=aad
+export PREFIX:=aad
+export AWS_ACCOUNT_ID:=000000000000
+export AWS_DEFAULT_REGION:=us-east-1
+export ENV_NAME:=ws
+export REMOTE_ENV_VAR_LOC:=ssm
+export CREATED_BY:=alexteki
+export SONAR_HOST_URL:=https://www.dev.sonar.qube.aws-prototyping.cloud
+export SONAR_PROJECT_KEY:=aws-application-development
+export AWS_CREDS_TARGET_ROLE:=arn:aws:iam::000000000000:role/aad-ev-cicd-role
+export OKTA_SECRET_NAME:=aad-okta-secrets
+export DB_SECRET_NAME:=aad-platform-db-secrets
+export GITLAB_SECRET_NAME:=aad-admin-gitlab-secrets
+export SECRET_GITLAB_CONFIG_PROP_apiToken:=blank
+export SSM_GITLAB_HOSTNAME:=blank
+export SSM_GITLAB_URL:=blank
+export GITLAB_AMI:=ami-0c57824b4b719ddb3
+export GITLAB_RUNNER_AMI:=ami-0557a15b87f6559cf
+export R53_HOSTED_ZONE_NAME:=blank
+export ALLOWED_IPS:=pl-4e2ece27
+export CUSTOMER_NAME:=AWS
+export CUSTOMER_LOGO:=https://companieslogo.com/img/orig/AMZN_BIG-accd00da.png
+export CUSTOMER_LOGO_ICON:=https://companieslogo.com/img/orig/AMZN.D-13fddc58.png
+export BACKSTAGE_CREATE_APP_VERSION:=0.5.4
+export BACKSTAGE_SCAFFOLDER_NAME:=Backstage Scaffolder
+export BACKSTAGE_SCAFFOLDER_EMAIL:=fsi-pace-amer+backstage-admin@amazon.com
+export DEPLOYMENT_TYPE:=blank
+export POSTGRES_HOST:=localhost
+export POSTGRES_PORT:=5432
+export POSTGRES_USER:=blank
+export POSTGRES_PASSWORD:=blank
+export PLATFORM_ROLE_ARN:=blank
+export SSM_PIPELINE_ROLE_ARN:=blank
+export gitProjectGroup:=
+export gitProjectName:=
+export gitRepoDomain:=
+
+Executing hook: generate_env_file
+generate_env_file SED Replacement Pattern: s|APP_NAME$|APP_NAME="aad"|;
+generate_env_file SED Replacement Pattern: s|PREFIX$|PREFIX="aad"|;
+generate_env_file SED Replacement Pattern: s|AWS_ACCOUNT_ID$|AWS_ACCOUNT_ID="000000000000"|;
+generate_env_file SED Replacement Pattern: s|AWS_DEFAULT_REGION$|AWS_DEFAULT_REGION="us-east-1"|;
+generate_env_file SED Replacement Pattern: s|ENV_NAME$|ENV_NAME="ws"|;
+generate_env_file SED Replacement Pattern: s|REMOTE_ENV_VAR_LOC$|REMOTE_ENV_VAR_LOC="ssm"|;
+generate_env_file SED Replacement Pattern: s|CREATED_BY$|CREATED_BY="alexteki"|;
+generate_env_file SED Replacement Pattern: s|SONAR_HOST_URL$|SONAR_HOST_URL="https://www.dev.sonar.qube.aws-prototyping.cloud"|;
+generate_env_file SED Replacement Pattern: s|SONAR_PROJECT_KEY$|SONAR_PROJECT_KEY="aws-application-development"|;
+generate_env_file SED Replacement Pattern: s|AWS_CREDS_TARGET_ROLE$|AWS_CREDS_TARGET_ROLE="arn:aws:iam::000000000000:role/aad-ev-cicd-role"|;
+generate_env_file SED Replacement Pattern: s|OKTA_SECRET_NAME$|OKTA_SECRET_NAME="aad-okta-secrets"|;
+generate_env_file SED Replacement Pattern: s|DB_SECRET_NAME$|DB_SECRET_NAME="aad-platform-db-secrets"|;
+generate_env_file SED Replacement Pattern: s|GITLAB_SECRET_NAME$|GITLAB_SECRET_NAME="aad-admin-gitlab-secrets"|;
+generate_env_file SED Replacement Pattern: s|SECRET_GITLAB_CONFIG_PROP_apiToken$|SECRET_GITLAB_CONFIG_PROP_apiToken=""|;
+generate_env_file SED Replacement Pattern: s|SSM_GITLAB_HOSTNAME$|SSM_GITLAB_HOSTNAME=""|;
+generate_env_file SED Replacement Pattern: s|SSM_GITLAB_URL$|SSM_GITLAB_URL=""|;
+generate_env_file SED Replacement Pattern: s|GITLAB_AMI$|GITLAB_AMI="ami-0c57824b4b719ddb3"|;
+generate_env_file SED Replacement Pattern: s|GITLAB_RUNNER_AMI$|GITLAB_RUNNER_AMI="ami-0557a15b87f6559cf"|;
+generate_env_file SED Replacement Pattern: s|R53_HOSTED_ZONE_NAME$|R53_HOSTED_ZONE_NAME=""|;
+generate_env_file SED Replacement Pattern: s|ALLOWED_IPS$|ALLOWED_IPS="pl-4e2ece27"|;
+generate_env_file SED Replacement Pattern: s|CUSTOMER_NAME$|CUSTOMER_NAME="AWS"|;
+generate_env_file SED Replacement Pattern: s|CUSTOMER_LOGO$|CUSTOMER_LOGO="https://companieslogo.com/img/orig/AMZN_BIG-accd00da.png"|;
+generate_env_file SED Replacement Pattern: s|CUSTOMER_LOGO_ICON$|CUSTOMER_LOGO_ICON="https://companieslogo.com/img/orig/AMZN.D-13fddc58.png"|;
+generate_env_file SED Replacement Pattern: s|BACKSTAGE_CREATE_APP_VERSION$|BACKSTAGE_CREATE_APP_VERSION="0.5.4"|;
+generate_env_file SED Replacement Pattern: s|BACKSTAGE_SCAFFOLDER_NAME$|BACKSTAGE_SCAFFOLDER_NAME="Backstage Scaffolder"|;
+generate_env_file SED Replacement Pattern: s|BACKSTAGE_SCAFFOLDER_EMAIL$|BACKSTAGE_SCAFFOLDER_EMAIL="fsi-pace-amer+backstage-admin@amazon.com"|;
+generate_env_file SED Replacement Pattern: s|DEPLOYMENT_TYPE$|DEPLOYMENT_TYPE=""|;
+generate_env_file SED Replacement Pattern: s|POSTGRES_HOST$|POSTGRES_HOST="localhost"|;
+generate_env_file SED Replacement Pattern: s|POSTGRES_PORT$|POSTGRES_PORT="5432"|;
+generate_env_file SED Replacement Pattern: s|POSTGRES_USER$|POSTGRES_USER=""|;
+generate_env_file SED Replacement Pattern: s|POSTGRES_PASSWORD$|POSTGRES_PASSWORD=""|;
+generate_env_file SED Replacement Pattern: s|PLATFORM_ROLE_ARN$|PLATFORM_ROLE_ARN=""|;
+generate_env_file SED Replacement Pattern: s|SSM_PIPELINE_ROLE_ARN$|SSM_PIPELINE_ROLE_ARN=""|;
+
+Contents written out to /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/config/.env file:
+# This file defines the names of the environment variables that are referenced
+# by deployment scripts.
+
+# The application name that is used to name resources
+# It is best to use a short value to avoid resource name length limits
+APP_NAME="aad"
+
+# a prefix for the application / environment
+PREFIX="aad"
+
+# 12 digit AWS account ID to deploy resources to
+AWS_ACCOUNT_ID="000000000000"
+
+# AWS region used as the default for AWS CLI commands
+# Example: us-east-1
+AWS_DEFAULT_REGION="us-east-1"
+
+# The environment name that is used to name resources and to determine
+# the value of environment-specific configurations.
+# It is best to use a short value to avoid resource name length limits
+# Examples: DEV, PROD, your initials
+ENV_NAME="ws"
+
+# Where environment variable values should be stored for remote system access.
+# Set value to 'na' to disable remote storage
+REMOTE_ENV_VAR_LOC="ssm"
+
+# The name or ID of the person who created the application environment
+CREATED_BY="alexteki"
+
+# The SonarQube host
+SONAR_HOST_URL="https://www.dev.sonar.qube.aws-prototyping.cloud"
+
+# The SonarQube project key
+SONAR_PROJECT_KEY="aws-application-development"
+
+# ARN of the IAM role assumed by a CICD pipeline
+# CICD Role Example: arn:aws:iam::<my-account-num>:role/<my-role-name>
+AWS_CREDS_TARGET_ROLE="arn:aws:iam::000000000000:role/aad-ev-cicd-role"
+
+# The name of the secret that contains Okta info
+OKTA_SECRET_NAME="aad-okta-secrets"
+
+# The name of the secret that contains database info
+DB_SECRET_NAME="aad-platform-db-secrets"
+
+# The name of the secret that contains GitLab info
+GITLAB_SECRET_NAME="aad-admin-gitlab-secrets"
+
+# The token to use for calling GitLab APIs
+SECRET_GITLAB_CONFIG_PROP_apiToken=""
+
+# The GitLab host name (without any protocol)
+SSM_GITLAB_HOSTNAME=""
+
+# The GitLab URL (with protocol)
+SSM_GITLAB_URL=""
+
+# The AMI for the GitLab service EC2
+GITLAB_AMI="ami-0c57824b4b719ddb3"
+
+# The AMI for the GitLab runner EC2
+GITLAB_RUNNER_AMI="ami-0557a15b87f6559cf"
+
+# Route 53 hosted zone for the deployment
+R53_HOSTED_ZONE_NAME=""
+
+# Comma separated list of IPv4 CICR ranges to allow requests to load balancers
+ALLOWED_IPS="pl-4e2ece27"
+
+# The name of the Backstage hosting organization
+CUSTOMER_NAME="AWS"
+
+# URL to the Backstage hosting organization logo
+CUSTOMER_LOGO="https://companieslogo.com/img/orig/AMZN_BIG-accd00da.png"
+
+# URL to the icon of the Backstage hosting organization logo
+CUSTOMER_LOGO_ICON="https://companieslogo.com/img/orig/AMZN.D-13fddc58.png"
+
+# Backstage configurations
+BACKSTAGE_CREATE_APP_VERSION="0.5.4"
+
+# Committer name used by scaffolder Git commits
+BACKSTAGE_SCAFFOLDER_NAME="Backstage Scaffolder"
+
+# Email address used by scaffolder Git commits
+BACKSTAGE_SCAFFOLDER_EMAIL="fsi-pace-amer+backstage-admin@amazon.com"
+
+# The type of deployment for the backstage platform - > SECURE / NON_SECURE
+DEPLOYMENT_TYPE=""
+
+# Backstage database configurations
+POSTGRES_HOST="localhost"
+POSTGRES_PORT="5432"
+POSTGRES_USER=""
+POSTGRES_PASSWORD=""
+
+# the root role of the backstage platform of which it can 
+PLATFORM_ROLE_ARN=""
+
+# the pipeline role to use for application provisioning
+SSM_PIPELINE_ROLE_ARN=""
+
+
+Finished executing CPA hooks
+
+----------------------------------------------
+03:06:30 PM - Context: print_current_environment
+----------------------------------------------
+
+
+Application Constant Settings:
+          Application Root Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop
+   Core Environment Script Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/environment
+                       IaC Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/iac
+           IaC Root Module Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/iac/roots
+  IaC Root Module Relative Dir: /iac/roots
+  Application Build Script Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/build-script
+              CICD Module Name: cicd
+CICD (CloudFormation Only) Dir: /Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/cicd
+                  Before Hooks: generate_make_env generate_env_file
+After Environment Switch Hooks: generate_env_file
+           Clear Text Log Keys: APP_NAME AWS_ACCOUNT_ID AWS_CREDS_TARGET_ROLE AWS_DEFAULT_REGION CREATED_BY ENABLE_ONCE_PER_ACCOUNT_RESOURCES ENV_NAME SONAR_HOST_URL SONAR_PROJECT_KEY TF_S3_BACKEND_NAME DEPLOYMENT_TYPE GITLAB_SECRET_NAME OKTA_SECRET_NAME SSM_PIPELINE_ROLE_ARN PLATFORM_ROLE_ARN SSM_GITLAB_HOSTNAME SSM_GITLAB_URL
+          Node Package Manager: yarn
+                   curlCommand: curl -L -b ~/.midway/cookie -c ~/.midway/cookie
+
+ROOT_CONTEXT is "print_current_environment"
+ROOT_CONTEXT_ARGS is ""
+
+WARNING: Could not detect how to parse git remote to set environment variables
+
+Configs will be read from JSON environment config files.
+
+
+Dynamic Lookups are DISABLED
+
+Dynamic Lookups FAIL_ON_LOOKUP_ERROR is ENABLED
+
+Dynamic Lookup Configurations:
+SSM_PIPELINE_ROLE_ARN = /aad/pipeline-role
+SSM_GITLAB_HOSTNAME = /aad/gitlab-hostname
+SSM_GITLAB_URL = /aad/gitlab-url
+SECRET_GITLAB_CONFIG_PROP_apiToken = aad-admin-gitlab-secrets
+
+
+Checking for dynamic lookup cache file at "/Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/environment/.environment-ws-lookup-cache.json"
+Dynamic lookup cache file NOT found
+
+
+
+---BEGIN DEBUG:
+
+HERE ARE THE ENV_KEYS:
+APP_NAME
+PREFIX
+AWS_ACCOUNT_ID
+AWS_DEFAULT_REGION
+ENV_NAME
+REMOTE_ENV_VAR_LOC
+CREATED_BY
+SONAR_HOST_URL
+SONAR_PROJECT_KEY
+AWS_CREDS_TARGET_ROLE
+OKTA_SECRET_NAME
+DB_SECRET_NAME
+GITLAB_SECRET_NAME
+SECRET_GITLAB_CONFIG_PROP_apiToken
+SSM_GITLAB_HOSTNAME
+SSM_GITLAB_URL
+GITLAB_AMI
+GITLAB_RUNNER_AMI
+R53_HOSTED_ZONE_NAME
+ALLOWED_IPS
+CUSTOMER_NAME
+CUSTOMER_LOGO
+CUSTOMER_LOGO_ICON
+BACKSTAGE_CREATE_APP_VERSION
+BACKSTAGE_SCAFFOLDER_NAME
+BACKSTAGE_SCAFFOLDER_EMAIL
+DEPLOYMENT_TYPE
+POSTGRES_HOST
+POSTGRES_PORT
+POSTGRES_USER
+POSTGRES_PASSWORD
+PLATFORM_ROLE_ARN
+SSM_PIPELINE_ROLE_ARN
+
+HERE ARE THE ENV_CONSTANTS:
+CUSTOMER_NAME = AWS
+POSTGRES_HOST = localhost
+ALLOWED_IPS = pl-4e2ece27
+ENV_NAME = ws
+PREFIX = aad
+POSTGRES_PASSWORD = blank
+CUSTOMER_LOGO_ICON = https://companieslogo.com/img/orig/AMZN.D-13fddc58.png
+AWS_DEFAULT_REGION = us-east-1
+GITLAB_SECRET_NAME = aad-admin-gitlab-secrets
+OKTA_AUTH_SERVER_ID = blank
+REMOTE_ENV_VAR_LOC = ssm
+SONAR_PROJECT_KEY = aws-application-development
+SONAR_HOST_URL = https://www.dev.sonar.qube.aws-prototyping.cloud
+OKTA_IDP = blank
+CREATED_BY = alexteki
+DEPLOYMENT_TYPE = blank
+GITLAB_AMI = ami-0c57824b4b719ddb3
+DB_SECRET_NAME = aad-platform-db-secrets
+PLATFORM_ROLE_ARN = blank
+R53_HOSTED_ZONE_NAME = blank
+POSTGRES_PORT = 5432
+AWS_CREDS_TARGET_ROLE = arn:aws:iam::000000000000:role/aad-ev-cicd-role
+CUSTOMER_LOGO = https://companieslogo.com/img/orig/AMZN_BIG-accd00da.png
+APP_NAME = aad
+POSTGRES_USER = blank
+OKTA_SECRET_NAME = aad-okta-secrets
+GITLAB_RUNNER_AMI = ami-0557a15b87f6559cf
+BACKSTAGE_SCAFFOLDER_NAME = Backstage Scaffolder
+BACKSTAGE_SCAFFOLDER_EMAIL = fsi-pace-amer+backstage-admin@amazon.com
+BACKSTAGE_CREATE_APP_VERSION = 0.5.4
+
+
+ENV_NAME is "ws"
+
+HERE ARE THE ENV_CONFIGS:
+AWS_ACCOUNT_ID = 000000000000
+
+HERE ARE THE SENSITIVE ENV_CONFIGS:
+
+ENV_RECONCILED_JSON:
+{
+  "APP_NAME": "aad",
+  "PREFIX": "aad",
+  "AWS_ACCOUNT_ID": "000000000000",
+  "AWS_DEFAULT_REGION": "us-east-1",
+  "ENV_NAME": "ws",
+  "REMOTE_ENV_VAR_LOC": "ssm",
+  "CREATED_BY": "alexteki",
+  "SONAR_HOST_URL": "https://www.dev.sonar.qube.aws-prototyping.cloud",
+  "SONAR_PROJECT_KEY": "aws-application-development",
+  "AWS_CREDS_TARGET_ROLE": "arn:aws:iam::000000000000:role/aad-ev-cicd-role",
+  "OKTA_SECRET_NAME": "aad-okta-secrets",
+  "DB_SECRET_NAME": "aad-platform-db-secrets",
+  "GITLAB_SECRET_NAME": "aad-admin-gitlab-secrets",
+  "SECRET_GITLAB_CONFIG_PROP_apiToken": "blank",
+  "SSM_GITLAB_HOSTNAME": "blank",
+  "SSM_GITLAB_URL": "blank",
+  "GITLAB_AMI": "ami-0c57824b4b719ddb3",
+  "GITLAB_RUNNER_AMI": "ami-0557a15b87f6559cf",
+  "R53_HOSTED_ZONE_NAME": "blank",
+  "ALLOWED_IPS": "pl-4e2ece27",
+  "CUSTOMER_NAME": "AWS",
+  "CUSTOMER_LOGO": "https://companieslogo.com/img/orig/AMZN_BIG-accd00da.png",
+  "CUSTOMER_LOGO_ICON": "https://companieslogo.com/img/orig/AMZN.D-13fddc58.png",
+  "BACKSTAGE_CREATE_APP_VERSION": "0.5.4",
+  "BACKSTAGE_SCAFFOLDER_NAME": "Backstage Scaffolder",
+  "BACKSTAGE_SCAFFOLDER_EMAIL": "fsi-pace-amer+backstage-admin@amazon.com",
+  "DEPLOYMENT_TYPE": "blank",
+  "POSTGRES_HOST": "localhost",
+  "POSTGRES_PORT": "5432",
+  "POSTGRES_USER": "blank",
+  "POSTGRES_PASSWORD": "blank",
+  "PLATFORM_ROLE_ARN": "blank",
+  "SSM_PIPELINE_ROLE_ARN": "blank"
+}
+
+CPA_ENV_VAR_FILE_NAME is "/Users/alexteki/repos/opa/workshop/public-github-personal/bs-workshop/environment/.environment-ws.json"
+EXIT_AFTER_DEBUG=""
+
+END DEBUG---
+
+
+Here are the values from your current environment (ws):
+{
+  "APP_NAME": "aad",
+  "PREFIX": "aad",
+  "AWS_ACCOUNT_ID": "000000000000",
+  "AWS_DEFAULT_REGION": "us-east-1",
+  "ENV_NAME": "ws",
+  "REMOTE_ENV_VAR_LOC": "ssm",
+  "CREATED_BY": "alexteki",
+  "SONAR_HOST_URL": "https://www.dev.sonar.qube.aws-prototyping.cloud",
+  "SONAR_PROJECT_KEY": "aws-application-development",
+  "AWS_CREDS_TARGET_ROLE": "arn:aws:iam::000000000000:role/aad-ev-cicd-role",
+  "OKTA_SECRET_NAME": "aad-okta-secrets",
+  "DB_SECRET_NAME": "aad-platform-db-secrets",
+  "GITLAB_SECRET_NAME": "aad-admin-gitlab-secrets",
+  "SECRET_GITLAB_CONFIG_PROP_apiToken": "blank",
+  "SSM_GITLAB_HOSTNAME": "blank",
+  "SSM_GITLAB_URL": "blank",
+  "GITLAB_AMI": "ami-0c57824b4b719ddb3",
+  "GITLAB_RUNNER_AMI": "ami-0557a15b87f6559cf",
+  "R53_HOSTED_ZONE_NAME": "blank",
+  "ALLOWED_IPS": "pl-4e2ece27",
+  "CUSTOMER_NAME": "AWS",
+  "CUSTOMER_LOGO": "https://companieslogo.com/img/orig/AMZN_BIG-accd00da.png",
+  "CUSTOMER_LOGO_ICON": "https://companieslogo.com/img/orig/AMZN.D-13fddc58.png",
+  "BACKSTAGE_CREATE_APP_VERSION": "0.5.4",
+  "BACKSTAGE_SCAFFOLDER_NAME": "Backstage Scaffolder",
+  "BACKSTAGE_SCAFFOLDER_EMAIL": "fsi-pace-amer+backstage-admin@amazon.com",
+  "DEPLOYMENT_TYPE": "blank",
+  "POSTGRES_HOST": "localhost",
+  "POSTGRES_PORT": "5432",
+  "POSTGRES_USER": "blank",
+  "POSTGRES_PASSWORD": "blank",
+  "PLATFORM_ROLE_ARN": "blank",
+  "SSM_PIPELINE_ROLE_ARN": "blank"
+}
+

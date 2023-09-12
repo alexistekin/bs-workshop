@@ -1,0 +1,17 @@
+{
+  "AWS_ACCOUNT_ID": "319691575056",
+  "AWS_CREDS_TARGET_ROLE": "arn:aws:iam::319691575056:role/aad-shared-cicd-role",
+  "AWS_DEFAULT_REGION": "us-east-1",
+  "CREATED_BY": "pace-platform-engineering",
+  "DEPLOYMENT_TYPE": "SECURE",
+  "ENV_NAME": "shared",
+  "OKTA_API_TOKEN": "sensitive",
+  "OKTA_AUDIENCE": "sensitive",
+  "OKTA_CLIENT_ID": "sensitive",
+  "OKTA_CLIENT_SECRET": "sensitive",
+  "R53_HOSTED_ZONE_NAME": "aad.fsi.pace.aws.dev",
+  "REMOTE_ENV_VAR_LOC": "gitlab",
+  "POSTGRES_USER": "na",
+  "POSTGRES_PASSWORD": "sensitive",
+  "PLATFORM_ROLE_ARN": "arn:aws:iam::319691575056:role/backstage-master-role"
+}

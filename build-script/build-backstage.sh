@@ -8,6 +8,6 @@ yarn --cwd  $backstageDir tsc
 yarn --cwd  $backstageDir build:all
 # yarn build-image
 DOCKER_BUILDKIT=1
-docker build . -f $bbScriptDir/../config/aws-production.Dockerfile --tag test-backstage
+docker build . -f $bbScriptDir/../config/aws-production.Dockerfile --tag $APP_NAME-backstage
 # cd -
 echo "Backstage app build finished"

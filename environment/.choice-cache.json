@@ -1,0 +1,12 @@
+{
+  "defaultAppName": "aad",
+  "defaultCreatedBy": "ALEXTEKI",
+  "defaultAwsAccountNum": "000000000000",
+  "defaultRegion": "us-east-1",
+  "defaultDeployRole": "n",
+  "defaultDeployRemoteEnvVars": "n",
+  "defaultRemoteEnvVarLoc": "ssm",
+  "defaultDeployTfBackend": "n",
+  "defaultDeployCdk2Backend": "n",
+  "defaultSonarQubeHostUrl": "https://www.dev.sonar.qube.aws-prototyping.cloud"
+}
