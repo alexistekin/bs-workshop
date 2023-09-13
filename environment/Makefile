@@ -284,3 +284,6 @@ synth-ecs: ## Deploys the platform CDK stack
 
 synth-eks: ## Deploys the platform CDK stack
 	CDK_MODE=synth $(ENV_PATH)utility-functions.sh exec_cdk_for_env aad-eks-environment
+
+setup-workshop-env: # Setup workshop environment
+	./workshop-set-env.sh
