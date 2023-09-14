@@ -49,12 +49,12 @@ fi
 
 
 # if the system is using git-defender and the repo is not configured, configure it
-if [ -z "$(type \"git-defender\" 2>/dev/null)" ] && ! grep -q "\[defender\]" .git/config ; then
-  echo "Found git-defender, but repo is not configured.  Proceeding to configure repo for git-defender"
-  (sleep 1; echo -e "y\n"; sleep 1; echo -e "y\n";)|git defender --setup
-  echo ""
-  echo ""
-fi
+# if [ -z "$(type \"git-defender\" 2>/dev/null)" ] && ! grep -q "\[defender\]" .git/config ; then
+#   echo "Found git-defender, but repo is not configured.  Proceeding to configure repo for git-defender"
+#   (sleep 1; echo -e "y\n"; sleep 1; echo -e "y\n";)|git defender --setup
+#   echo ""
+#   echo ""
+# fi
 
 # Add and commit changes to repo if there are files to commit
 if [ -n "$(git status --porcelain=v1 2>/dev/null)" ]; then
