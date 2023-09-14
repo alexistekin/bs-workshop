@@ -1,0 +1,11 @@
+{
+    "private": true,
+    "name": "aws-application-development",
+    "workspaces": [
+        "aad-ecs-environment",
+        "aad-eks-environment",
+        "aad-serverless-environment",
+        "aad-common-constructs",
+        "aad-platform"
+    ]
+}
