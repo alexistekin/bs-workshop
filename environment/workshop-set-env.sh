@@ -27,3 +27,5 @@ EOF
 else
   echo "Failed to retrieve AWS account ID"
 fi
+
+DR=y make pce
