@@ -1,20 +1,17 @@
 #!/bin/bash
 
-#script to simplify Workshop environment variable setup 
-
-USE_DEFAULT="n"
+# Query AWS account ID
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
-VAR_STORE="1"
-USER="ec2-user"
 
-#create environment
-make ce <<EOF
-$USE_DEFAULT
-$AWS_ACCOUNT_ID
-$VAR_STORE
-$USER
+# Check if AWS_ACCOUNT_ID is not empty
+if [ -n "$AWS_ACCOUNT_ID" ]; then
+  # Create the .environment-ws.json file
+  cat <<EOF > .environment-ws.json
+{
+  "AWS_ACCOUNT_ID": "$AWS_ACCOUNT_ID"
+}
 EOF
-
-#update environment and store lookup variables
-make pce
-DR=y make pce
+  echo "Created .environment-ws.json with AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
+else
+  echo "Failed to retrieve AWS account ID."
+fi
