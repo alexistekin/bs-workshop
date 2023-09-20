@@ -9,10 +9,10 @@ shopt -s expand_aliases
 DESIRED_COUNT=${1:-2}
 
 echo "Updating the desired count of the backstage service to $DESIRED_COUNT"
-AAD_ECS_CLUSTER_ARN=$(aws ecs list-clusters --query "clusterArns[?contains(@,'aad-platform')] | [0]" --output text)
+AAD_ECS_CLUSTER_ARN=$(aws ecs list-clusters --query "clusterArns[?contains(@,'opa-platform')] | [0]" --output text)
 
 if [[ ! -z "$AAD_ECS_CLUSTER_ARN" ]] && [[ "$AAD_ECS_CLUSTER_ARN" != "None" ]]; then
-    BACKSTAGE_SERVICE_ARN=$(aws ecs list-services --cluster "$AAD_ECS_CLUSTER_ARN" --query "serviceArns[?contains(@, 'aad-platform')] | [0]" --output text)
+    BACKSTAGE_SERVICE_ARN=$(aws ecs list-services --cluster "$AAD_ECS_CLUSTER_ARN" --query "serviceArns[?contains(@, 'opa-platform')] | [0]" --output text)
     
     if [[ ! -z "$BACKSTAGE_SERVICE_ARN" ]] && [[ "$BACKSTAGE_SERVICE_ARN" != "None" ]]; then
         echo "Attempting to set backstage service desired count to $DESIRED_COUNT..."
