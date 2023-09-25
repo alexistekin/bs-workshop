@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Starting the build"
+  build:
+    commands:
+      - echo "Building the application"
+      #for Ubuntu Packages 
+      - sudo apt-get update
+      - sudo apt-get install -y jq
+      - curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
+  post_build:
+    commands:
+      - echo "Finished the build"
+artifacts:
+  files: '**/*'  # Include all files in the build artifacts
+  name: my-app-artifacts  # Name for the build artifacts
